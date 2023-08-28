@@ -18,15 +18,23 @@ func (s *Svc) SearchUser(tags []string) {
 	}
 	defer file.Close()
 
-	// Read the CSV file into a slice of Record structs
+	// Read the CSV file into a slice of Salary structs
 	var salaryCSV []entity.SalaryCSV
 	if err := gocsv.UnmarshalFile(file, &salaryCSV); err != nil {
 		log.Fatalln(err)
 	}
 
-	// Print the records
+	// Print the Users
+	res := FilterUser(salaryCSV, tags)
+	for _, r := range res {
+		fmt.Printf("Name: %s, Salary: %s\n", r.Name, r.Balance)
+	}
+}
+
+func FilterUser(salaries []entity.SalaryCSV, tags []string) []entity.SalaryCSV {
 	var isUserHaveTags bool = true
-	for _, s := range salaryCSV {
+	var res []entity.SalaryCSV
+	for _, s := range salaries {
 		isUserHaveTags = true
 		tagArr := strings.Split(s.Tags, ",")
 		for _, t := range tags {
@@ -36,9 +44,10 @@ func (s *Svc) SearchUser(tags []string) {
 			}
 		}
 		if isUserHaveTags {
-			fmt.Printf("Name: %s, Salary: %s\n", s.Name, s.Balance)
+			res = append(res, s)
 		}
 	}
+	return res
 }
 
 func ArrayContains(array []string, s string) bool {
@@ -64,6 +73,7 @@ func (s *Svc) GetUserList() {
 	}
 	var salaryCSV []entity.SalaryCSV
 	for _, s := range salaries {
+		// Only write active users
 		if s.IsActive {
 			for _, f := range s.Friends {
 				tags := strings.Join(s.Tags, ",")

@@ -10,4 +10,4 @@ go run main.go --fetch=true --isUseErrorApi=true
 go run main.go --tag="cupidatat,dolor"
 
 ### Command to run test
-go test -short -coverprofile coverage.out -v ./domain/user/repository/http
+go test -short -coverprofile coverage.out -v ./service ./domain/user/repository/http
