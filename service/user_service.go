@@ -53,7 +53,7 @@ func ArrayContains(array []string, s string) bool {
 func (s *Svc) GetUserList() {
 	salaries, err := s.userRepo.GetUserList()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln(*err)
 	}
 
 	// create csv file

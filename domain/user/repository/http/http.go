@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 
@@ -20,6 +21,10 @@ func (u *UserAPIHttp) GetUserList() ([]*entity.Salary, *error) {
 	res, err := http.Get(u.Url)
 	if err != nil {
 		return nil, &err
+	}
+	if res.StatusCode >= 500 {
+		errr := errors.New("Api is not available now. please try again later")
+		return nil, &errr
 	}
 
 	body, err := io.ReadAll(res.Body)

@@ -23,8 +23,7 @@ func main() {
 	userHttpRepo := userHttp.New(lib.GetEnv("URL"))
 	svc := service.New(userHttpRepo)
 
-	var fetch string
-	var tags string
+	var fetch, tags, isUseErrorApi string
 
 	cmd := &cobra.Command{
 		Use: "user",
@@ -33,10 +32,15 @@ func main() {
 	}
 
 	cmd.Flags().StringVar(&fetch, "fetch", "", "Fetch user list from API and write to users.csv")
+	cmd.Flags().StringVar(&isUseErrorApi, "isUseErrorApi", "", "Fetch user list from 503 error API")
 	cmd.Flags().StringVar(&tags, "tag", "", "User tag")
 	cmd.Execute()
 
 	if fetch == "true" {
+		if isUseErrorApi == "true" {
+			userHttpRepo := userHttp.New(lib.GetEnv("ERROR_503_URL"))
+			svc = service.New(userHttpRepo)
+		}
 		svc.GetUserList()
 	} else if strings.Trim(tags, " ") != "" {
 		arr := strings.Split(tags, ",")
