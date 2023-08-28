@@ -25,6 +25,9 @@ func (u *UserAPIHttp) GetUserList() ([]*entity.Salary, *error) {
 	if res.StatusCode >= 500 {
 		errr := errors.New("Api is not available now. please try again later")
 		return nil, &errr
+	} else if res.StatusCode == 404 {
+		errr := errors.New("Invalid API Url")
+		return nil, &errr
 	}
 
 	body, err := io.ReadAll(res.Body)
