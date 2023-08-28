@@ -5,6 +5,7 @@ package main
 
 import (
 	"log"
+	"strings"
 
 	userHttp "github.com/fazarrahman/search-user/domain/user/repository/http"
 	"github.com/fazarrahman/search-user/lib"
@@ -22,16 +23,23 @@ func main() {
 	userHttpRepo := userHttp.New(lib.GetEnv("URL"))
 	svc := service.New(userHttpRepo)
 
-	var tag string
+	var fetch string
+	var tags string
 
-	rootCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use: "user",
 		Run: func(ccmd *cobra.Command, args []string) {
 		},
 	}
 
-	rootCmd.Flags().StringVar(&tag, "tag", "", "User tag")
-	rootCmd.Execute()
+	cmd.Flags().StringVar(&fetch, "fetch", "", "Fetch user list from API and write to users.csv")
+	cmd.Flags().StringVar(&tags, "tag", "", "User tag")
+	cmd.Execute()
 
-	svc.GetUserList()
+	if fetch == "true" {
+		svc.GetUserList()
+	} else if strings.Trim(tags, " ") != "" {
+		arr := strings.Split(tags, ",")
+		svc.SearchUser(arr)
+	}
 }

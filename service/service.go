@@ -11,4 +11,6 @@ func New(userRepo userRepository.UserInterface) *Svc {
 }
 
 type Service interface {
+	GetUserList()
+	SearchUser(tags []string)
 }
